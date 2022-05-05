@@ -365,7 +365,7 @@ public class BSTree<T extends Comparable<? super T>> implements Iterable {
      * @return The height of the tree, -1 if BST is empty
      */
     private int findHeightHelper(BSTNode root) {
-        /* Recurssively goes through the left and right of the tree, adding one each layer it
+        /* Recursively goes through the left and right of the tree, adding one each layer it
         passes, and returns the Max value gotten which will be the height of the tree. */
         if (root == null){
             return 0;

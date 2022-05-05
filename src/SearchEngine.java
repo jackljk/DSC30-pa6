@@ -100,7 +100,7 @@ public class SearchEngine {
         // search and output intersection results
         // hint: list's addAll() and retainAll() methods could be helpful
         LinkedList<String> arrInter = new LinkedList<String>();
-        try{
+        try {
             arrInter.addAll(searchTree.findDataList(keys[0]));
             for (int i = 1;i<keys.length;i++){
                 arrInter.retainAll(searchTree.findDataList(keys[i]));
@@ -115,10 +115,11 @@ public class SearchEngine {
         if (keys.length > 1){//Only searches individual outputs if there is more than one key
             LinkedList<String> arr = new LinkedList<String>();
             for (String key : keys) {
-                try{
+                try {
                     //Loops through the keys arr if it has more than one value
                     arr.addAll(searchTree.findDataList(key));//Adds all key values to the arr
-                    arr.removeAll(arrInter);//Removes all values that overlap with the intersected arr
+                    //Removes all values that overlap with the intersected arr
+                    arr.removeAll(arrInter);
                     if (!arr.isEmpty()){
                         print(key, arr);//prints the results
                         arrInter.addAll(arr);
@@ -137,9 +138,9 @@ public class SearchEngine {
      * @param documents Output of documents from query
      */
     public static void print(String query, LinkedList<String> documents) {
-        if (documents == null || documents.isEmpty())
+        if (documents == null || documents.isEmpty()) {
             System.out.println("The search yielded no results for " + query);
-        else {
+        } else {
             Object[] converted = documents.toArray();
             Arrays.sort(converted);
             System.out.println("Documents related to " + query
@@ -161,11 +162,11 @@ public class SearchEngine {
         BSTree<String> ratingTree = new BSTree<String>();
 
         // process command line arguments
-        int ARG_QUERY_START = 2;
+        int argQueryStart = 2;
         String fileName = args[0];
         int searchKind = Integer.parseInt(args[1]);
         String query = "";
-        for (int i = ARG_QUERY_START;i<args.length;i++){
+        for (int i = argQueryStart;i<args.length;i++){
             //Adds all the query's into one string
             query = query + args[i] + " ";
         }
@@ -175,12 +176,12 @@ public class SearchEngine {
         // populate search trees
         populateSearchTrees(movieTree, studioTree, ratingTree, fileName);
         // choose the right tree to query
-        int ACTOR_RATING = 2;
+        int actorRating = 2;
         if (searchKind == 0){
             searchMyQuery(movieTree, query);
         } else if (searchKind == 1){
             searchMyQuery(studioTree, query);
-        } else if (searchKind == ACTOR_RATING){
+        } else if (searchKind == actorRating){
             searchMyQuery(ratingTree, query);
         }
 
