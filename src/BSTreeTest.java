@@ -1,8 +1,8 @@
+import com.sun.org.apache.bcel.internal.generic.ILOAD;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -15,7 +15,7 @@ public class BSTreeTest {
     public void init(){
         a = new BSTree<Integer>();
         b = new BSTree<String>();
-        c = new BSTree<Double>();
+        c = new BSTree<Integer>();
     }
 
     @Test
@@ -77,8 +77,11 @@ public class BSTreeTest {
         b.insert("Zhao ann");
         b.insert("Konichiwa");
         b.insert("annyeonghaseyo");
+        b.insert("jon-favreau");
         assertTrue(b.findKey("Zhao ann"));
         assertTrue(b.findKey("Hola"));
+        assertTrue(b.findKey("jon-favreau"));
+        assertFalse(b.findKey("robert-downey-jr"));
     }
 
     @Test
@@ -134,6 +137,25 @@ public class BSTreeTest {
         assertEquals(0, b.findHeight());
         b.insert("bonjou");
         assertEquals(1, b.findHeight());
+        c.insert(100);
+        c.insert(20);
+        c.insert(30);
+        c.insert(120);
+        c.insert(130);
+        c.insert(131);
+        c.insert(132);
+        c.insert(133);
+        c.insert(134);
+        c.insert(31);
+        c.insert(19);
+        c.insert(17);
+        c.insert(15);
+        c.insert(14);
+        c.insert(13);
+        c.insert(12);
+        c.insert(11);
+        c.insert(10);
+        assertEquals(9, c.findHeight());
     }
 
     @Test
@@ -170,13 +192,128 @@ public class BSTreeTest {
         assertEquals("Hell", bIter2.next());
         assertEquals("Hello", bIter2.next());
         assertEquals("Helloo", bIter2.next());
+        assertFalse(bIter2.hasNext());
     }
 
     @Test
     public void intersection() {
+        a.insert(20);
+        a.insert(10);
+        a.insert(70);
+        a.insert(5);
+        a.insert(15);
+        a.insert(2);
+        a.insert(3);
+        a.insert(50);
+        a.insert(80);
+        c.insert(20);
+        c.insert(10);
+        c.insert(70);
+        c.insert(3);
+        c.insert(50);
+        c.insert(80);
+        ArrayList<Integer> test = new ArrayList<>(Arrays.asList(3, 10, 20, 50, 70, 80));
+        Iterator aIter = a.iterator();
+        Iterator cIter = c.iterator();
+        assertEquals(test, a.intersection(aIter, cIter));
+        ArrayList<Integer> test2 = new ArrayList<>();
+        assertEquals(test2, a.intersection(aIter, cIter));
+        c.insert(100000000);
+        a.insert(100000001);
+        c.insert(15);
+        test.add(15);
+        Collections.sort(test);
+        assertEquals(test, a.intersection(a.iterator(), c.iterator()));
     }
 
     @Test
     public void levelMax() {
+        a.insert(20);
+        a.insert(10);
+        a.insert(70);
+        a.insert(5);
+        a.insert(15);
+        a.insert(2);
+        a.insert(3);
+        a.insert(50);
+        a.insert(80);
+        assertEquals(20, a.levelMax(0));
+        assertEquals(70, a.levelMax(1));
+        assertEquals(80, a.levelMax(2));
+        assertEquals(2, a.levelMax(3));
+        assertEquals(3, a.levelMax(4));
+        c.insert(100);
+        c.insert(20);
+        c.insert(30);
+        c.insert(120);
+        c.insert(130);
+        c.insert(131);
+        c.insert(132);
+        c.insert(133);
+        c.insert(134);
+        c.insert(1000);
+        c.insert(31);
+        c.insert(19);
+        c.insert(17);
+        c.insert(15);
+        c.insert(14);
+        c.insert(13);
+        c.insert(12);
+        c.insert(11);
+        c.insert(10);
+        assertEquals(130, c.levelMax(2));
+        assertEquals(null, c.levelMax(10));
+        assertEquals(1000, c.levelMax(7));
+    }
+
+    @Test (expected = NullPointerException.class)
+    public void insertNPE1(){
+        a.insert(null);
+    }
+
+    @Test (expected = NullPointerException.class)
+    public void findkeyNPE(){
+        a.insert(10);
+        a.findKey(null);
+    }
+
+    @Test (expected = NullPointerException.class)
+    public void insertdataNPE1(){
+        a.insert(10);
+        a.insertData(null, 100);
+    }
+
+    @Test (expected = NullPointerException.class)
+    public void insertdataNPE2(){
+        a.insert(10);
+        a.insertData(10, null);
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void insertDataIAE(){
+        a.insert(10);
+        a.insertData(100, 200);
+    }
+
+    @Test (expected = NullPointerException.class)
+    public void finddatalistNPE(){
+        a.insert(10);
+        a.findDataList(null);
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void finddatalistIAE(){
+        a.insert(10);
+        a.findDataList(100);
+    }
+
+    @Test (expected = NoSuchElementException.class)
+    public void iteratornextNSEE(){
+        a.insert(100);
+        a.insert(20);
+        Iterator aIter = a.iterator();
+        aIter.next();
+        aIter.next();
+        aIter.next();
     }
 }

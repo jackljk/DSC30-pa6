@@ -38,11 +38,10 @@ public class SearchEngine {
                 // read 5 lines per batch:
                 // movie, cast, studios, rating, trailing hyphen
                 String movie = scanner.nextLine().trim();
-                String cast[] = scanner.nextLine().split(" ");
-                String studios[] = scanner.nextLine().split(" ");
+                String[] cast = scanner.nextLine().split(" ");
+                String[] studios = scanner.nextLine().split(" ");
                 String rating = scanner.nextLine().trim();
                 scanner.nextLine();
-
                 /* Uses a helper function to populate the trees */
                 // populate three trees with the information you just read
                 // hint: create a helper function and reuse it to build all three trees
@@ -66,20 +65,22 @@ public class SearchEngine {
      */
     private static void populateSearchTreeHelper(BSTree<String> tree, String[] keys,
                                                     String value){
+        value = value.toLowerCase();
         for (String key : keys) {
+            key = key.toLowerCase();
             //Since the keys are in arrays we will iterate through the keys
-            if (tree.findKey(key.toLowerCase())) {
+            if (tree.findKey(key)) {
                 //If the key already exist
-                if (!tree.findDataList(key.toLowerCase()).contains(value.toLowerCase())) {
+                if (!tree.findDataList(key).contains(value)) {
                     //If the value is not in the Linked-list of the key adds it to the list
-                    tree.insertData(key.toLowerCase(), value.toLowerCase());
+                    tree.insertData(key, value);
                 }
             } else {
                 //Key is not in the tree, therefore adds the key
-                tree.insert(key.toLowerCase());
-                if (!tree.findDataList(key.toLowerCase()).contains(value.toLowerCase())) {
+                tree.insert(key);
+                if (!tree.findDataList(key).contains(value)) {
                     //If the value is not in the Linked-list of the key adds it to the list
-                    tree.insertData(key.toLowerCase(), value.toLowerCase());
+                    tree.insertData(key, value);
                 }
             }
         }
@@ -96,23 +97,35 @@ public class SearchEngine {
         /* Searches the binary search tree for the values of the keys which is given by the query */
         // process query
         String[] keys = query.toLowerCase().split(" ");
-
         // search and output intersection results
         // hint: list's addAll() and retainAll() methods could be helpful
-        LinkedList<String> arrInter = new LinkedList<String>(searchTree.findDataList(keys[0]));
-        for (int i = 1;i<keys.length;i++){
-            arrInter.retainAll(searchTree.findDataList(keys[i]));
+        LinkedList<String> arrInter = new LinkedList<String>();
+        try{
+            arrInter.addAll(searchTree.findDataList(keys[0]));
+            for (int i = 1;i<keys.length;i++){
+                arrInter.retainAll(searchTree.findDataList(keys[i]));
+            }
+            print(query, arrInter);
+        } catch (IllegalArgumentException e) {
+            print(query, null);
         }
-        print(query, arrInter);
+
         // search and output individual results
         // hint: list's addAll() and removeAll() methods could be helpful
         if (keys.length > 1){//Only searches individual outputs if there is more than one key
             LinkedList<String> arr = new LinkedList<String>();
             for (String key : keys) {
-                //Loops through the keys arr if it has more than one value
-                arr.addAll(searchTree.findDataList(key));//Adds all key values to the arr
-                arr.removeAll(arrInter);//Removes all values that overlap with the intersected arr
-                print(key, arr);//prints the results
+                try{
+                    //Loops through the keys arr if it has more than one value
+                    arr.addAll(searchTree.findDataList(key));//Adds all key values to the arr
+                    arr.removeAll(arrInter);//Removes all values that overlap with the intersected arr
+                    if (!arr.isEmpty()){
+                        print(key, arr);//prints the results
+                        arrInter.addAll(arr);
+                    }
+                } catch (IllegalArgumentException e) {
+                    print(key, null);
+                }
             }
         }
     }
@@ -141,20 +154,35 @@ public class SearchEngine {
      */
     public static void main(String[] args) {
 
-        /* TODO */
+        /* Implements main for the search engine */
         // initialize search trees
         BSTree<String> movieTree = new BSTree<String>();
         BSTree<String> studioTree = new BSTree<String>();
         BSTree<String> ratingTree = new BSTree<String>();
 
         // process command line arguments
+        int ARG_QUERY_START = 2;
         String fileName = args[0];
         int searchKind = Integer.parseInt(args[1]);
+        String query = "";
+        for (int i = ARG_QUERY_START;i<args.length;i++){
+            //Adds all the query's into one string
+            query = query + args[i] + " ";
+        }
+        query = query.toLowerCase();
+
 
         // populate search trees
-        populateSearchTrees()
-
+        populateSearchTrees(movieTree, studioTree, ratingTree, fileName);
         // choose the right tree to query
+        int ACTOR_RATING = 2;
+        if (searchKind == 0){
+            searchMyQuery(movieTree, query);
+        } else if (searchKind == 1){
+            searchMyQuery(studioTree, query);
+        } else if (searchKind == ACTOR_RATING){
+            searchMyQuery(ratingTree, query);
+        }
 
     }
 }

@@ -262,7 +262,7 @@ public class BSTree<T extends Comparable<? super T>> implements Iterable {
             BSTNode curr = this.getRoot();
             while (curr != null){
                 //Traverses the node going left if key is less than curr and right otherwise
-                if (curr.getKey() == key){
+                if (curr.getKey().compareTo(key) == 0){
                     //If key of current is equal to key then returns true and stops the loop
                     return true;
                 } else if (key.compareTo(curr.getKey()) < 0){
@@ -293,7 +293,7 @@ public class BSTree<T extends Comparable<? super T>> implements Iterable {
             BSTNode curr = this.getRoot();
             while (curr != null) {
                 //Traverses the node going left if key is less than curr and right otherwise
-                if (curr.getKey() == key) {
+                if (curr.getKey().compareTo(key) == 0) {
                     //If key of current is equal to key then accesses the Linked-list associated
                     // with it and adds the data into the Linked-list
                     curr.addNewInfo(data);
@@ -323,11 +323,13 @@ public class BSTree<T extends Comparable<? super T>> implements Iterable {
         if (key == null) {
             //Throws if key or data is null
             throw new NullPointerException();
+        } else if (!findKey(key)) {
+            throw new IllegalArgumentException();
         } else {
             BSTNode curr = this.getRoot();
             while (curr != null) {
                 //Traverses the node going left if key is less than curr and right otherwise
-                if (curr.getKey() == key) {
+                if (curr.getKey().compareTo(key) == 0) {
                     //If key of current is equal to key then returns the Linked-list associated
                     // with the Node.
                     return curr.getDataList();
@@ -397,11 +399,7 @@ public class BSTree<T extends Comparable<? super T>> implements Iterable {
          */
         public boolean hasNext() {
             /* Checks if there are any nodes left to iterate through */
-            if (this.nodes.empty()){
-                return false;
-            } else {
-                return true;
-            }
+            return !this.nodes.empty();
         }
 
         /**
@@ -441,13 +439,59 @@ public class BSTree<T extends Comparable<? super T>> implements Iterable {
 
     /* * * * * Extra Credit Methods * * * * */
 
+    /**
+     * Intersection implementation
+     *
+     * @param iter1 First BST iterator
+     * @param iter2 Second BST iterator
+     * @return Arraylist of the values that are contained within both BSTs
+     */
     public ArrayList<T> intersection(Iterator<T> iter1, Iterator<T> iter2) {
-        /* TODO */
-        return null;
+        /* Implements intersection by first creating 2 new Arraylists */
+        if (iter1 == null || iter2 == null){
+            throw new NullPointerException();
+        }
+        ArrayList<T> arr1 = new ArrayList<T>();
+        ArrayList<T> arr2 = new ArrayList<T>();
+        while (iter1.hasNext()){
+            //Adds all values from iter1 to one of the Arraylist
+            arr1.add(iter1.next());
+        }
+        while (iter2.hasNext()){
+            //Adds all values from iter2 to the other Arraylist
+            arr2.add(iter2.next());
+        }
+        //RetainAll gets the intersected values between the 2 arrays
+        arr1.retainAll(arr2);
+        return arr1;
     }
 
+
     public T levelMax(int level) {
-        /* TODO */
-        return null;
+        /* Implements level max on BST */
+        if (level > this.findHeight()){
+            return null;
+        }
+        ArrayList<T> maxEachLevel = new ArrayList<T>();
+        levelMaxhelper(maxEachLevel, this.getRoot(), 0);
+        return maxEachLevel.get(level);
+    }
+
+    private void levelMaxhelper(ArrayList<T> list, BSTNode node, int level){
+        if (node == null){
+            return;
+        } else if (level == list.size()) {
+            list.add(node.getKey());
+        } else {
+            T toAdd;
+            if (list.get(level).compareTo(node.getKey()) > 0){
+                toAdd = list.get(level);
+            } else {
+                toAdd = node.getKey();
+            }
+            list.set(level, toAdd);
+        }
+        levelMaxhelper(list, node.getLeft(), level + 1);
+        levelMaxhelper(list, node.getRight(), level + 1);
     }
 }

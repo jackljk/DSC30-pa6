@@ -15,7 +15,7 @@ Query Number = 0
 Output:
 Documents related to emilia-clarke are: [solo, terminator]
 
-Query = “emma-stone jesse-eisenberg”
+Query = “0”
 Query Number = 0
 Output:
 Documents related to emma-stone jesse-eisenberg are: [zombieland]
