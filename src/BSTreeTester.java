@@ -1,4 +1,3 @@
-import com.sun.org.apache.bcel.internal.generic.ILOAD;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -6,7 +5,7 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 
-public class BSTreeTest {
+public class BSTreeTester {
     private BSTree a;
     private BSTree b;
     private BSTree c;
